@@ -105,11 +105,11 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
       if (Number(pushId)) {
         console.log(`Pushing ${pushId} for ${chat_id}`);
         let stack = await readStackFromGroup(chat_id);
-        stack.push(pushId);
-        await Promise.all([
-          pinMessage(BOT_KEY, chat_id, pushId, msg.text.includes("notify")),
-          putStackToGroup(chat_id, stack)
-        ]);
+        if (stack[stack.length - 1] !== pushId) {
+          stack.push(pushId);
+          await putStackToGroup(chat_id, stack);
+        }
+        await pinMessage(BOT_KEY, chat_id, pushId, msg.text.includes("notify"));
       } else {
         console.log(`Pushing nothing for ${chat_id}`);
         await sendMessage(BOT_KEY, chat_id, `Which message do you want to push?`, msg.message_id);
