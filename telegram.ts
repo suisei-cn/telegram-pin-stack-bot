@@ -20,7 +20,6 @@ export async function pinMessage(bot, chat_id, message_id, notification) {
     if (!message_id) {
         return await axios.post(`https://api.telegram.org/bot${bot}/unpinChatMessage`, {
             chat_id,
-            message_id,
             disable_notification: !notification
         }).then(x => x.data);
     }
