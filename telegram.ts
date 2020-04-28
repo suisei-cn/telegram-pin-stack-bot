@@ -21,11 +21,11 @@ export async function pinMessage(bot, chat_id, message_id, notification) {
         return await axios.post(`https://api.telegram.org/bot${bot}/unpinChatMessage`, {
             chat_id,
             disable_notification: !notification
-        }).then(x => x.data);
+        }).then(x => x.data).catch(x => console.log(x.data));
     }
     return await axios.post(`https://api.telegram.org/bot${bot}/pinChatMessage`, {
         chat_id,
         message_id,
         disable_notification: !notification
-    }).then(x => x.data);
+    }).then(x => x.data).catch(x => console.log(x.data));
 }
