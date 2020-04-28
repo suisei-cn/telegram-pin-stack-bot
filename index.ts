@@ -88,7 +88,8 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
       } else {
         // Pin message
         let stack = await readStackFromGroup(chat_id);
-        let pinId = stack.pop();
+        stack.pop();
+        let pinId = stack[stack.length - 1];
         console.log(`Pinning ${pinId} for ${chat_id}`);
         await Promise.all([
           putStackToGroup(chat_id, stack),
