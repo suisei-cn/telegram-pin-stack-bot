@@ -1,6 +1,7 @@
 import { APIGatewayProxyHandler } from 'aws-lambda';
 import { readStackFromGroup, putStackToGroup } from './database';
 import { sendMessage, getChatMember, pinMessage } from './telegram';
+import { getIdList } from './utils';
 
 const BOT_KEY = process.env.TELEGRAM_TOKEN || "";
 
@@ -97,13 +98,13 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
         ])
       }
     } else if (msg.text.startsWith("/push")) {
-      let pushId;
+      let pushIdList;
       if (msg.reply_to_message) {
-        pushId = msg.reply_to_message.message_id;
+        pushIdList = [msg.reply_to_message.message_id];
       } else {
-        pushId = msg.text.split(" ")[1];
+        pushIdList = getIdList(msg.text);
       }
-      if (Number(pushId)) {
+      for (const pushId of pushIdList) {
         console.log(`Pushing ${pushId} for ${chat_id}`);
         let stack = await readStackFromGroup(chat_id);
         if (stack[stack.length - 1] !== pushId) {
@@ -111,9 +112,10 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
           await putStackToGroup(chat_id, stack);
         }
         await pinMessage(BOT_KEY, chat_id, pushId, msg.text.includes("notify"));
-      } else {
+      }
+      if (pushIdList.length === 0) {
         console.log(`Pushing nothing for ${chat_id}`);
-        await sendMessage(BOT_KEY, chat_id, `Which message do you want to push?`, msg.message_id);
+        await sendMessage(BOT_KEY, chat_id, `No valid message id found :(`, msg.message_id);
       }
     } else if (msg.text.startsWith("/deltop")) {
       let stack = await readStackFromGroup(chat_id);
