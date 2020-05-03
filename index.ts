@@ -99,6 +99,7 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
       }
     } else if (msg.text.startsWith("/push")) {
       let pushIdList;
+      let finalPinMessage = -1;
       if (msg.reply_to_message) {
         pushIdList = [msg.reply_to_message.message_id];
       } else {
@@ -111,11 +112,13 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
           stack.push(pushId);
           await putStackToGroup(chat_id, stack);
         }
-        await pinMessage(BOT_KEY, chat_id, pushId, msg.text.includes("notify"));
+        finalPinMessage = pushId;
       }
       if (pushIdList.length === 0) {
         console.log(`Pushing nothing for ${chat_id}`);
         await sendMessage(BOT_KEY, chat_id, `No valid message id found :(`, msg.message_id);
+      } else {
+        await pinMessage(BOT_KEY, chat_id, finalPinMessage, msg.text.includes("notify"));
       }
     } else if (msg.text.startsWith("/deltop")) {
       let stack = await readStackFromGroup(chat_id);
