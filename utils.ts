@@ -7,17 +7,6 @@ export function getIdList(str: string): number[] {
                 ret.push(Number(item));
                 continue;
             }
-            // https://t.me/chan/404
-            // https://telegram.me/chan/404
-            // https://telegram.me/s/chan/404
-            // t.me/chanenel/404
-            let match1 = item.match(/(https:\/\/)?t(elegram)?\.me\/(s\/)?[a-zA-Z_]+\/([0-9]+)/);
-            if (match1 !== null && match1[4]) {
-                let num = Number(match1[4]);
-                if (!isNaN(num))
-                    ret.push(num);
-                continue;
-            }
 
             // https://t.me/c/114514/1919
             // https://telegram.me/c/114514/1919
@@ -25,6 +14,18 @@ export function getIdList(str: string): number[] {
             let match2 = item.match(/(https:\/\/)?t(elegram)?\.me\/c\/[0-9]+\/([0-9]+)/);
             if (match2 !== null && match2[3]) {
                 let num = Number(match2[3]);
+                if (!isNaN(num))
+                    ret.push(num);
+                continue;
+            }
+
+            // https://t.me/chan/404
+            // https://telegram.me/chan/404
+            // https://telegram.me/s/chan/404
+            // t.me/chanenel/404
+            let match1 = item.match(/(https:\/\/)?t(elegram)?\.me\/(s\/)?[a-zA-Z_]{5,}\/([0-9]+)/);
+            if (match1 !== null && match1[4]) {
+                let num = Number(match1[4]);
                 if (!isNaN(num))
                     ret.push(num);
                 continue;
