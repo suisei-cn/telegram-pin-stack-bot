@@ -94,7 +94,7 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
         console.log(`Pinning ${pinId} for ${chat_id}`);
         await Promise.all([
           putStackToGroup(chat_id, stack),
-          pinMessage(BOT_KEY, chat_id, pinId, msg.text.includes("notify"))
+          pinMessage(BOT_KEY, chat_id, pinId, msg.text.includes("notify"), msg.message_id)
         ])
       }
     } else if (msg.text.startsWith("/push")) {
@@ -118,7 +118,7 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
         console.log(`Pushing nothing for ${chat_id}`);
         await sendMessage(BOT_KEY, chat_id, `No valid message id found :(`, msg.message_id);
       } else {
-        await pinMessage(BOT_KEY, chat_id, finalPinMessage, msg.text.includes("notify"));
+        await pinMessage(BOT_KEY, chat_id, finalPinMessage, msg.text.includes("notify"), msg.message_id);
       }
     } else if (msg.text.startsWith("/deltop")) {
       let stack = await readStackFromGroup(chat_id);
