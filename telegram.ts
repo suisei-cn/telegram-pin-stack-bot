@@ -39,10 +39,10 @@ export async function pinMessage(bot, chat_id, message_id, notification, reply_t
     }).then(x => x.data).catch(async x => {
         console.log("pinError", x);
         if (reply_to_message_id) {
-            if (x.data.ok === false) {
-                await sendMessage(bot, chat_id, `Pin message [#${message_id}](https://t.me/c/${normalize(chat_id)}/${message_id}) failed: \`${x.data.description}\``, reply_to_message_id);
+            if (x.response.data.ok === false) {
+                await sendMessage(bot, chat_id, `Pin message [#${message_id}](https://t.me/c/${normalize(chat_id)}/${message_id}) failed: \`${x.response.data.description}\``, reply_to_message_id);
             }
         }
-        return x.data;
+        return x.response.data;
     });
 }
