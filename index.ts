@@ -64,7 +64,7 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
     await replyWithStack(msg, chat_id);
   } else {
     if (msg.text.startsWith("/pop")) {
-      pinFirst(msg, chat_id);
+      await pinFirst(msg, chat_id);
     } else if (msg.text.startsWith("/push")) {
       await push(msg, chat_id);
     } else if (msg.text.startsWith("/deltop")) {
