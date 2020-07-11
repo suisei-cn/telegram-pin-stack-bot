@@ -74,6 +74,8 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
     } else if (msg.text.startsWith("/replacetop")) {
       await deltop(msg, chat_id);
       await push(msg, chat_id);
+    } else if (msg.text.startsWith("/update")) {
+      await pinFirst(msg, chat_id, false);
     }
   }
 

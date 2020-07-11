@@ -43,7 +43,11 @@ export async function replyWithStack(msg: any, chat_id: number) {
   }
 }
 
-export async function pinFirst(msg: any, chat_id: number) {
+export async function pinFirst(
+  msg: any,
+  chat_id: number,
+  deleteTop: boolean = true
+) {
   if ((await validateState(msg, chat_id)) === false) {
     return;
   }
@@ -55,16 +59,16 @@ export async function pinFirst(msg: any, chat_id: number) {
   stack.pop();
   let pinId = stack[stack.length - 1];
   console.log(`Pinning ${pinId} for ${chat_id}`);
-  await Promise.all([
-    putStackToGroup(chat_id, stack),
-    pinMessage(
-      BOT_KEY,
-      chat_id,
-      pinId,
-      msg.text.includes("notify"),
-      msg.message_id
-    ),
-  ]);
+  await pinMessage(
+    BOT_KEY,
+    chat_id,
+    pinId,
+    msg.text.includes("notify"),
+    msg.message_id
+  );
+  if (deleteTop) {
+    await putStackToGroup(chat_id, stack);
+  }
 }
 
 export async function clearmsg(msg: any, chat_id: number) {
