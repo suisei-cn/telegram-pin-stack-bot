@@ -1,25 +1,15 @@
-import { APIGatewayProxyHandler } from 'aws-lambda';
-import { readStackFromGroup, putStackToGroup } from './database';
-import { sendMessage, getChatMember, pinMessage } from './telegram';
-import { getIdList } from './utils';
+import { APIGatewayProxyHandler } from "aws-lambda";
+import { getChatMember } from "./telegram";
+import { push, deltop, clearmsg, replyWithStack, pinFirst } from "./features";
 
 const BOT_KEY = process.env.TELEGRAM_TOKEN || "";
 
 const defaultReply = {
   statusCode: 200,
   body: JSON.stringify({
-    message: `OK`
+    message: `OK`,
   }),
-};;
-
-function generateMessageList(stack: number[], id: number, username: string): string {
-  let msgs = [];
-  let chatPrefix = username ? `https://t.me/${username}/` : `https://t.me/c/${String(id).replace(/^-100/, "")}/`;
-  for (const i of stack) {
-    msgs.push(`[${i}](${chatPrefix}${i})`);
-  }
-  return msgs.join(", ");
-}
+};
 
 export const handler: APIGatewayProxyHandler = async (event, _context) => {
   let body;
@@ -29,7 +19,7 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
     return {
       statusCode: 400,
       body: JSON.stringify({
-        message: `Bad JSON: ${e}`
+        message: `Bad JSON: ${e}`,
       }),
     };
   }
@@ -37,7 +27,7 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: `Not changed`
+        message: `Not changed`,
       }),
     };
   }
@@ -51,7 +41,7 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: `Not changed`
+        message: `Not changed`,
       }),
     };
   }
@@ -64,78 +54,25 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
     return {
       statusCode: 200,
       body: JSON.stringify({
-        message: `Not changed`
+        message: `Not changed`,
       }),
     };
   }
 
   if (msg.text.startsWith("/stack")) {
     // Return the stack
-    console.log(`Viewing the pin stack for ${chat_id}`);
-    let stack = await readStackFromGroup(chat_id);
-    if (stack.length === 0) {
-      await sendMessage(BOT_KEY, msg.chat.id, `Current pin stack is empty.`, msg.message_id);
-    } else {
-      await sendMessage(BOT_KEY, msg.chat.id, `Current pin stack: ${generateMessageList(stack, msg.chat.id, msg.chat.username)}`, msg.message_id);
-    }
+    await replyWithStack(msg, chat_id);
   } else {
-    const my_perm = await getChatMember(BOT_KEY, chat_id, 1189170779);
     if (msg.text.startsWith("/pop")) {
-      // Return the stack
-      if (!my_perm.can_pin_messages) {
-        console.log(`Pinning nothing for ${chat_id}`);
-        await sendMessage(BOT_KEY, msg.chat.id, "I can't pin messages here. Please check the permissions.", msg.message_id);
-        return defaultReply;
-      } else {
-        // Pin message
-        let stack = await readStackFromGroup(chat_id);
-        stack.pop();
-        let pinId = stack[stack.length - 1];
-        console.log(`Pinning ${pinId} for ${chat_id}`);
-        await Promise.all([
-          putStackToGroup(chat_id, stack),
-          pinMessage(BOT_KEY, chat_id, pinId, msg.text.includes("notify"), msg.message_id)
-        ])
-      }
+      pinFirst(msg, chat_id);
     } else if (msg.text.startsWith("/push")) {
-      let pushIdList;
-      let finalPinMessage = -1;
-      if (msg.reply_to_message) {
-        pushIdList = [msg.reply_to_message.message_id];
-      } else {
-        pushIdList = getIdList(msg.text);
-      }
-      for (const pushId of pushIdList) {
-        console.log(`Pushing ${pushId} for ${chat_id}`);
-        let stack = await readStackFromGroup(chat_id);
-        if (stack[stack.length - 1] !== pushId) {
-          stack.push(pushId);
-          await putStackToGroup(chat_id, stack);
-        }
-        finalPinMessage = pushId;
-      }
-      if (pushIdList.length === 0) {
-        console.log(`Pushing nothing for ${chat_id}`);
-        await sendMessage(BOT_KEY, chat_id, `No valid message id found :(`, msg.message_id);
-      } else {
-        await pinMessage(BOT_KEY, chat_id, finalPinMessage, msg.text.includes("notify"), msg.message_id);
-      }
+      await push(msg, chat_id);
     } else if (msg.text.startsWith("/deltop")) {
-      let stack = await readStackFromGroup(chat_id);
-      stack.pop();
-      console.log(`Removing top for ${chat_id}`);
-      await Promise.all([
-        putStackToGroup(chat_id, stack),
-        sendMessage(BOT_KEY, chat_id, `Done.`, msg.message_id)
-      ]);
+      await deltop(msg, chat_id);
     } else if (msg.text.startsWith("/clear")) {
-      console.log(`Cleaning top for ${chat_id}`);
-      await Promise.all([
-        putStackToGroup(chat_id, []),
-        sendMessage(BOT_KEY, chat_id, `Done.`, msg.message_id)
-      ]);
+      await clearmsg(msg, chat_id);
     }
   }
 
   return defaultReply;
-}
+};
