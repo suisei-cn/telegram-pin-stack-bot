@@ -71,6 +71,9 @@ export const handler: APIGatewayProxyHandler = async (event, _context) => {
       await deltop(msg, chat_id);
     } else if (msg.text.startsWith("/clear")) {
       await clearmsg(msg, chat_id);
+    } else if (msg.text.startsWith("/replacetop")) {
+      await deltop(msg, chat_id);
+      await push(msg, chat_id);
     }
   }
 
