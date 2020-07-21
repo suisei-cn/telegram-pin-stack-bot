@@ -9,7 +9,7 @@ Manage a stack of pinned messages for Telegram groups.
 This project involves AWS Lambda, AWS API Gateway as well as AWS DynamoDB, which all have "always free" tiers.
 
 1. Register a bot on Telegram. Now you have a token for the bot.
-2. **Turn off Privacy Mode of the bot**, or the bot will fail to find some messages. [[src](https://stackoverflow.com/questions/25813440/the-asymptotic-growth-of-n-choose-floorn-2)]
+2. ~~**Turn off Privacy Mode of the bot**, or the bot will fail to find some messages. [[src](https://stackoverflow.com/questions/25813440/the-asymptotic-growth-of-n-choose-floorn-2)]~~ *This is still in investigation.*
 3. Create an AWS Lambda function.
 4. Add an AWS API Gateway endpoint to this function. Now you have an endpoint address for your Lambda function.
 5. Create an AWS DynamoDB, and give full access of this to the role AWS just created for the Lambda function. You might need o add a policy to the role.
