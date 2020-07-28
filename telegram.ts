@@ -1,7 +1,7 @@
-import axios from "axios";
+import axios from 'axios'
 
 function normalize(id: number): number {
-  return Number(String(id).replace(/^-100/, ""));
+  return Number(String(id).replace(/^-100/, ''))
 }
 
 export async function sendMessage(
@@ -15,9 +15,9 @@ export async function sendMessage(
       chat_id,
       text,
       reply_to_message_id,
-      parse_mode: "Markdown",
+      parse_mode: 'Markdown',
     })
-    .then((x) => x.data);
+    .then((x) => x.data)
 }
 
 export async function getChatMember(bot, chat_id, user_id) {
@@ -26,7 +26,7 @@ export async function getChatMember(bot, chat_id, user_id) {
       chat_id,
       user_id,
     })
-    .then((x) => x.data.result);
+    .then((x) => x.data.result)
 }
 
 export async function pinMessage(
@@ -44,9 +44,9 @@ export async function pinMessage(
       })
       .then((x) => x.data)
       .catch((x) => {
-        console.log("unpinError", x);
-        return x.data;
-      });
+        console.log('unpinError', x)
+        return x.data
+      })
   }
   return await axios
     .post(`https://api.telegram.org/bot${bot}/pinChatMessage`, {
@@ -56,7 +56,7 @@ export async function pinMessage(
     })
     .then((x) => x.data)
     .catch(async (x) => {
-      console.log("pinError", x);
+      console.log('pinError', x)
       if (reply_to_message_id) {
         if (x.response.data.ok === false) {
           await sendMessage(
@@ -64,11 +64,13 @@ export async function pinMessage(
             chat_id,
             `Pin message [#${message_id}](https://t.me/c/${normalize(
               chat_id
-            )}/${message_id}) failed: \`${x.response.data.description}\``,
+            )}/${message_id}) failed: \`${
+              x.response.data.description
+            }\`. If this message exists, reply to this message with \`/push@pinstackbot\` (or push_notify) to remind the bot of this message.`,
             reply_to_message_id
-          );
+          )
         }
       }
-      return x.response.data;
-    });
+      return x.response.data
+    })
 }
