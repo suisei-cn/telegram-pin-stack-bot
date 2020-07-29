@@ -66,7 +66,7 @@ export async function pinMessage(
               chat_id
             )}/${message_id}) failed: \`${
               x.response.data.description
-            }\`. If this message exists, reply to this message with \`/push@pinstackbot\` (or push_notify) to remind the bot of this message.`,
+            }\`. If that message exists, reply to that message with /push (or \`push_notify\`) to remind the bot of this message.`,
             reply_to_message_id
           )
         }
