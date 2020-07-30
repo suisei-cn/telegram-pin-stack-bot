@@ -20,8 +20,8 @@ AWS_DYNAMODB_REGION - Region of your DynamoDB
 TELEGRAM_TOKEN - Telegram bot token
 ```
 
-7. `npm install`
-8. `serverless package`
-9. Deploy the zip package in `.serverless/` to AWS Lambda.
-10. Set the webhook of your bot at your API endpoint. You might need to visit `https://api.telegram.org/bot<YOUR TELEGRAM BOT TOKEN>/setWebhook?url=<YOUR API ENDPOINT>`.
-11. Test if the bot is working.
+6. `npm install`
+7. `serverless package`
+8. Deploy the zip package in `.serverless/` to AWS Lambda.
+9. Set the webhook of your bot at your API endpoint. You might need to visit `https://api.telegram.org/bot<YOUR TELEGRAM BOT TOKEN>/setWebhook?url=<YOUR API ENDPOINT>`.
+10. Test if the bot is working.
