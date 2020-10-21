@@ -8,7 +8,8 @@ export async function sendMessage(
   bot,
   chat_id,
   text,
-  reply_to_message_id = undefined
+  reply_to_message_id = undefined,
+  disable_web_page_preview = false
 ) {
   return await axios
     .post(`https://api.telegram.org/bot${bot}/sendMessage`, {
@@ -16,6 +17,7 @@ export async function sendMessage(
       text,
       reply_to_message_id,
       parse_mode: 'Markdown',
+      disable_web_page_preview,
     })
     .then((x) => x.data)
 }

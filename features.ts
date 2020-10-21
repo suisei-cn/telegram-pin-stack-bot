@@ -38,7 +38,8 @@ export async function replyWithStack(msg: any, chat_id: number) {
         msg.chat.id,
         msg.chat.username
       )}.`,
-      msg.message_id
+      msg.message_id,
+      true
     )
   }
 }
