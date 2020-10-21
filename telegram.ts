@@ -59,16 +59,17 @@ export async function pinMessage(
       console.log('pinError', x)
       if (reply_to_message_id) {
         if (x.response.data.ok === false) {
-          await sendMessage(
-            bot,
-            chat_id,
-            `Pin message [#${message_id}](https://t.me/c/${normalize(
-              chat_id
-            )}/${message_id}) failed: \`${
-              x.response.data.description
-            }\`. If that message exists, reply to that message with /push (or \`push_notify\`) to remind the bot of this message.`,
-            reply_to_message_id
-          )
+          const desc = x.response.data.description
+          if (!desc.includes('CHAT_NOT_MODIFIED')) {
+            await sendMessage(
+              bot,
+              chat_id,
+              `Pin message [#${message_id}](https://t.me/c/${normalize(
+                chat_id
+              )}/${message_id}) failed: \`${desc}\`. If that message exists, reply to that message with /push (or \`push_notify\`) to remind the bot of this message.`,
+              reply_to_message_id
+            )
+          }
         }
       }
       return x.response.data
