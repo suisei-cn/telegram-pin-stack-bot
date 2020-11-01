@@ -1,3 +1,5 @@
+**Announcement: [Telegram added a feature to pin multi messages recently](https://telegram.org/blog/pinned-messages-locations-playlists#multiple-pinned-messages). Therefore, this bot is now at maintenance mode. We will still fix any bugs found, but no new features will be built. The public instance @pinstackbot will be still running for the forseeable future, but we can't give a promise on when it will stop working. You are welcome to run your own instance or change the code as you wish over the BSD-3 license.**
+
 ## Pin Stack Bot📍
 
 Manage a stack of pinned messages for Telegram groups.
